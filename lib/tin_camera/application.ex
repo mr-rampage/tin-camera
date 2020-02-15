@@ -19,7 +19,9 @@ defmodule TinCamera.Application do
 
     children = [
       PubSub,
+      Picam.Camera,
       {MotionSensor, camera_config},
+      {TinCamera, camera_config},
       {TinCamera.Logger, camera_config}
     ]
 

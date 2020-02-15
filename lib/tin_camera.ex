@@ -1,18 +1,29 @@
 defmodule TinCamera do
-  @moduledoc """
-  Documentation for TinCamera.
-  """
+  use GenServer
 
-  @doc """
-  Hello world.
+  require Logger
 
-  ## Examples
+  def start_link(config) do
+    GenServer.start_link(__MODULE__, config, name: __MODULE__)
+  end
 
-      iex> TinCamera.hello
-      :world
+  @impl GenServer
+  def init(config) do
+    PubSub.subscribe(self(), config.topic)
+    {:ok, config}
+  end
 
-  """
-  def hello do
-    :world
+  @impl GenServer
+  def handle_info({:motion}, state) do
+    Picam.next_frame()
+      |> Base.encode64()
+      |> Logger.debug()
+
+    {:noreply, state}
+  end
+
+  @impl GenServer
+  def handle_info({:no_motion}, state) do
+    {:noreply, state}
   end
 end
