@@ -11,23 +11,18 @@ defmodule TinCamera.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: TinCamera.Supervisor]
-    children =
-      [
-        PubSub,
-        { 
-          MotionSensor, 
-          %MotionSensor.Config{ 
-            :pin => @input_pin, 
-            :topic => :motion_detector 
-          }
-        },
-        {
-          TinCamera.Logger,
-          %TinCamera.Logger{
-            :topic => :motion_detector
-          }
-        }
-      ]
+
+    camera_config = %TinCamera.Config{
+      :pin => @input_pin,
+      :topic => :motion_detector
+    }
+
+    children = [
+      PubSub,
+      {MotionSensor, camera_config},
+      {TinCamera.Logger, camera_config}
+    ]
+
     Supervisor.start_link(children, opts)
   end
 
