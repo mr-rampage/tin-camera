@@ -27,8 +27,4 @@ defmodule TinCamera.Application do
 
     Supervisor.start_link(children, opts)
   end
-
-  def target() do
-    Application.get_env(:tin_camera, :target)
-  end
 end
