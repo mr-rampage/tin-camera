@@ -5,8 +5,6 @@ defmodule TinCamera.Application do
 
   use Application
 
-  require Logger
-
   @input_pin Application.get_env(:tin_camera, :switch_pin, 17)
 
   def start(_type, _args) do
@@ -15,37 +13,22 @@ defmodule TinCamera.Application do
     opts = [strategy: :one_for_one, name: TinCamera.Supervisor]
     children =
       [
+        PubSub,
         { 
           MotionSensor, 
-          %MotionSensor.Config{
-            :pin => @input_pin,
-            :on_trigger => fn () -> Logger.debug("Motion sensor tripped!") end,
-            :on_release => fn () -> Logger.debug("Motion sensor off!") end
+          %MotionSensor.Config{ 
+            :pin => @input_pin, 
+            :topic => :motion_detector 
+          }
+        },
+        {
+          TinCamera.Logger,
+          %TinCamera.Logger{
+            :topic => :motion_detector
           }
         }
-        # Children for all targets
-        # Starts a worker by calling: TinCamera.Worker.start_link(arg)
-        # {TinCamera.Worker, arg},
-      ] ++ children(target())
-
+      ]
     Supervisor.start_link(children, opts)
-  end
-
-  # List all child processes to be supervised
-  def children(:host) do
-    [
-      # Children that only run on the host
-      # Starts a worker by calling: TinCamera.Worker.start_link(arg)
-      # {TinCamera.Worker, arg},
-    ]
-  end
-
-  def children(_target) do
-    [
-      # Children for all targets except host
-      # Starts a worker by calling: TinCamera.Worker.start_link(arg)
-      # {TinCamera.Worker, arg},
-    ]
   end
 
   def target() do

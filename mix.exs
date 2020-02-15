@@ -45,6 +45,7 @@ defmodule TinCamera.MixProject do
       {:ring_logger, "~> 0.6"},
       {:toolshed, "~> 0.2"},
       {:picam, "~> 0.4.0"},
+      {:pubsub, "~> 1.0"},
 
       # Dependencies for all targets except :host
       {:nerves_runtime, "~> 0.6", targets: @all_targets},

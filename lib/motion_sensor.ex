@@ -9,29 +9,21 @@ defmodule MotionSensor do
     end
 
     @impl GenServer
-    def init(%MotionSensor.Config{pin: input_pin} = config) do
-        {:ok, gpio} = Circuits.GPIO.open(input_pin, :input)
+    def init(config) do
+        {:ok, gpio} = Circuits.GPIO.open(config.pin, :input)
         Circuits.GPIO.set_interrupts(gpio, :both)
-        {:ok, create_state(config, gpio)}
+        {:ok, %{gpio: gpio, topic: config.topic}}
     end
 
     @impl GenServer
     def handle_info({:circuits_gpio, _pin, _timestamp, 0}, state) do
-        state.on_release.()
+        PubSub.publish(state.topic, {:no_motion})
         {:noreply, state}
     end
 
     @impl GenServer
     def handle_info({:circuits_gpio, _pin, _timestamp, 1}, state) do
-        state.on_trigger.()
+        PubSub.publish(state.topic, {:motion})
         {:noreply, state}
-    end
-
-    defp create_state(config, gpio) do
-        %{
-            :on_release => config.on_release,
-            :on_trigger => config.on_trigger,
-            :gpio => gpio
-        }
     end
 end
