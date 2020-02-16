@@ -2,8 +2,17 @@ defmodule MotionSensor do
   @moduledoc """
   Simple PIR motion sensor
   """
+  @enforce_keys [:gpio, :topic]
+  defstruct [:gpio, :topic]
+
+  @type t :: %MotionSensor{gpio: reference(), topic: atom()}
+
   use GenServer
 
+  @doc """
+    Starts the Motion Sensor
+  """
+  @spec start_link(TinCamera.Config.t) :: GenServer.on_start
   def start_link(config) do
     GenServer.start_link(__MODULE__, config, name: __MODULE__)
   end

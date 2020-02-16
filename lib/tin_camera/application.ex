@@ -6,6 +6,7 @@ defmodule TinCamera.Application do
   use Application
 
   @input_pin Application.get_env(:tin_camera, :switch_pin, 17)
+  @camera Application.get_env(:picam, :camera, Picam.Camera)
 
   def start(_type, _args) do
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -19,7 +20,7 @@ defmodule TinCamera.Application do
 
     children = [
       PubSub,
-      Picam.Camera,
+      @camera,
       {MotionSensor, camera_config},
       {TinCamera, camera_config},
       {TinCamera.Logger, camera_config}

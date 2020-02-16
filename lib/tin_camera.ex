@@ -3,6 +3,7 @@ defmodule TinCamera do
 
   require Logger
 
+  @spec start_link(TinCamera.Config.t) :: GenServer.on_start
   def start_link(config) do
     GenServer.start_link(__MODULE__, config, name: __MODULE__)
   end

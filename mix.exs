@@ -47,6 +47,8 @@ defmodule TinCamera.MixProject do
       {:picam, "~> 0.4.0"},
       {:pubsub, "~> 1.0"},
 
+      {:dialyxir, "~> 1.0.0-rc.7", only: [:dev], runtime: false},
+
       # Dependencies for all targets except :host
       {:nerves_runtime, "~> 0.6", targets: @all_targets},
       {:nerves_init_gadget, "~> 0.4", targets: @all_targets},
