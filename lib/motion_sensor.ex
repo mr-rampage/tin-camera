@@ -7,6 +7,8 @@ defmodule MotionSensor do
 
   @type t :: %MotionSensor{gpio: reference(), topic: atom()}
 
+  @gpio Application.get_env(:circuits_gpio, :gpio, Circuits.GPIO)
+
   use GenServer
 
   @doc """
@@ -19,8 +21,8 @@ defmodule MotionSensor do
 
   @impl GenServer
   def init(config) do
-    {:ok, gpio} = Circuits.GPIO.open(config.pin, :input)
-    Circuits.GPIO.set_interrupts(gpio, :both)
+    {:ok, gpio} = @gpio.open(config.pin, :input)
+    @gpio.set_interrupts(gpio, :both)
     {:ok, %{gpio: gpio, topic: config.topic}}
   end
 
