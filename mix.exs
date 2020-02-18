@@ -10,6 +10,7 @@ defmodule TinCamera.MixProject do
       app: @app,
       version: @version,
       elixir: "~> 1.9",
+      elixirc_paths: elixirc_paths(Mix.env()),
       archives: [nerves_bootstrap: "~> 1.7"],
       start_permanent: Mix.env() == :prod,
       build_embedded: true,
@@ -19,6 +20,9 @@ defmodule TinCamera.MixProject do
       preferred_cli_target: [run: :host, test: :host]
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Starting nerves_bootstrap adds the required aliases to Mix.Project.config()
   # Aliases are only added if MIX_TARGET is set.
