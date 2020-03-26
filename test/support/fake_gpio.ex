@@ -1,4 +1,4 @@
-defmodule MotionSensor.FakeGPIO do
+defmodule FakeGPIO do
   def open(_pin_number, _pin_direction) do
     Task.start(fn -> IO.puts("Faking GPIO") end)
   end

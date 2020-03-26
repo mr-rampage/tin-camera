@@ -1,4 +1,6 @@
 defmodule TinCamera do
+  @gpio Application.get_env(:circuits_gpio, :gpio, Circuits.GPIO)
+
   use GenServer
 
   require Logger
@@ -10,21 +12,26 @@ defmodule TinCamera do
 
   @impl GenServer
   def init(config) do
-    PubSub.subscribe(self(), config.topic)
-    {:ok, config}
+    {:ok, gpio} = @gpio.open(config.pin, :input)
+    @gpio.set_interrupts(gpio, :both)
+    {:ok, %{gpio: gpio}}
   end
 
   @impl GenServer
-  def handle_info({:motion}, state) do
-    Picam.next_frame()
-      |> Base.encode64()
-      |> Logger.debug()
-
+  def handle_info({:circuits_gpio, _pin, _timestamp, 0}, state) do
+    Logger.debug("Motion sensor tripped!")
+    
     {:noreply, state}
   end
 
   @impl GenServer
-  def handle_info({:no_motion}, state) do
+  def handle_info({:circuits_gpio, _pin, _timestamp, 1}, state) do
+    Logger.debug("Motion sensor off!")
+    
+    Picam.next_frame()
+      |> Base.encode64()
+      |> Logger.debug()
+
     {:noreply, state}
   end
 end

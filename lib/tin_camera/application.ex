@@ -14,16 +14,12 @@ defmodule TinCamera.Application do
     opts = [strategy: :one_for_one, name: TinCamera.Supervisor]
 
     camera_config = %TinCamera.Config{
-      :pin => @input_pin,
-      :topic => :motion_detector
+      :pin => @input_pin
     }
 
     children = [
-      PubSub,
       @camera,
-      {MotionSensor, camera_config},
-      {TinCamera, camera_config},
-      {TinCamera.Logger, camera_config}
+      {TinCamera, camera_config}
     ]
 
     Supervisor.start_link(children, opts)
