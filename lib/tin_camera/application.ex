@@ -14,12 +14,18 @@ defmodule TinCamera.Application do
     opts = [strategy: :one_for_one, name: TinCamera.Supervisor]
 
     camera_config = %TinCamera.Config{
-      :pin => @input_pin
+      :pin => @input_pin,
+      :client_id => "front-door"
     }
 
     children = [
       @camera,
-      {TinCamera, camera_config}
+      {TinCamera, camera_config},
+      Tortoise.Connection.start_link(
+        client_id: TinCamera.Config.client_id,
+        server: {Tortoise.Transport.Tcp, host: 'localhost', port: 1883},
+        handler: {Tortoise.Handler.Logger, []}
+      )
     ]
 
     Supervisor.start_link(children, opts)

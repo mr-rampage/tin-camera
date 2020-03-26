@@ -49,6 +49,7 @@ defmodule TinCamera.MixProject do
       {:ring_logger, "~> 0.8.0"},
       {:toolshed, "~> 0.2.12"},
       {:picam, "~> 0.4.0"},
+      {:tortoise, "~>0.9.4"},
 
       {:dialyxir, "~> 1.0.0", only: [:dev], runtime: false},
 
