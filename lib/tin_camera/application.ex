@@ -5,7 +5,7 @@ defmodule TinCamera.Application do
 
   use Application
 
-  @input_pin Application.get_env(:tin_camera, :switch_pin, 17)
+  @config Application.get_all_env(:tin_camera)
   @camera Application.get_env(:picam, :camera, Picam.Camera)
 
   def start(_type, _args) do
@@ -13,19 +13,9 @@ defmodule TinCamera.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: TinCamera.Supervisor]
 
-    camera_config = %TinCamera.Config{
-      :pin => @input_pin,
-      :client_id => "front-door"
-    }
-
     children = [
       @camera,
-      {TinCamera, camera_config},
-      Tortoise.Connection.start_link(
-        client_id: TinCamera.Config.client_id,
-        server: {Tortoise.Transport.Tcp, host: 'localhost', port: 1883},
-        handler: {Tortoise.Handler.Logger, []}
-      )
+      {TinCamera, @config}
     ]
 
     Supervisor.start_link(children, opts)

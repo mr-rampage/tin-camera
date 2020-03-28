@@ -11,7 +11,7 @@ defmodule TinCamera.MixProject do
       version: @version,
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
-      archives: [nerves_bootstrap: "~> 1.7"],
+      archives: [nerves_bootstrap: "~> 1.8"],
       start_permanent: Mix.env() == :prod,
       build_embedded: true,
       aliases: [loadconfig: [&bootstrap/1]],
@@ -43,19 +43,19 @@ defmodule TinCamera.MixProject do
   defp deps do
     [
       # Dependencies for all targets
-      {:circuits_gpio, "~> 0.4.5"},
-      {:nerves, "~> 1.6.1", runtime: false},
-      {:shoehorn, "~> 0.6.0"},
-      {:ring_logger, "~> 0.8.0"},
-      {:toolshed, "~> 0.2.12"},
-      {:picam, "~> 0.4.0"},
-      {:tortoise, "~>0.9.4"},
+      {:circuits_gpio, "~> 0.4"},
+      {:nerves, "~> 1.6", runtime: false},
+      {:shoehorn, "~> 0.6"},
+      {:ring_logger, "~> 0.8"},
+      {:toolshed, "~> 0.2"},
+      {:picam, "~> 0.4"},
+      {:tortoise, "~>0.9"},
 
-      {:dialyxir, "~> 1.0.0", only: [:dev], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
 
       # Dependencies for all targets except :host
       {:nerves_runtime, "~> 0.11", targets: @all_targets},
-      {:nerves_init_gadget, "~> 0.7", targets: @all_targets},
+      {:nerves_pack, "~> 0.3", targets: @all_targets},
 
       # Dependencies for specific targets
       {:nerves_system_rpi, "~> 1.11", runtime: false, targets: :rpi},

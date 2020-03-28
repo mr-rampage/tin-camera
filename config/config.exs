@@ -5,7 +5,12 @@
 # is restricted to this project.
 import Config
 
-config :tin_camera, target: Mix.target()
+config :tin_camera, 
+  target: Mix.target(),
+  mqtt_host: System.get_env("MQTT_HOST"),
+  mqtt_port: System.get_env("MQTT_PORT"),
+  mqtt_client_id: System.get_env("MQTT_CLIENT_ID")
+
 
 # Customize non-Elixir parts of the firmware. See
 # https://hexdocs.pm/nerves/advanced-configuration.html for details.
