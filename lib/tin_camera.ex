@@ -13,6 +13,8 @@ defmodule TinCamera do
   @impl GenServer
   def init(config) do
     client_id = Keyword.get(config, :mqtt_client_id, "nerves-client")
+    topic = Keyword.get(config, :mqtt_topic, "cameras")
+    location = Keyword.get(config, :location, "front")
 
     {:ok, gpio} = @gpio.open(Keyword.get(config, :pin, "17") |> String.to_integer(), :input)
     @gpio.set_interrupts(gpio, :both)
@@ -27,7 +29,7 @@ defmodule TinCamera do
         handler: {Tortoise.Handler.Logger, []}
     )
 
-    {:ok, %{gpio: gpio, client_id: client_id, mqtt: mqtt}}
+    {:ok, %{gpio: gpio, client_id: client_id, mqtt: mqtt, topic: topic, location: location}}
   end
 
   @impl GenServer
@@ -43,8 +45,8 @@ defmodule TinCamera do
 
     Tortoise.publish(
       state.client_id, 
-      "cameras",
-      create_message(),
+      state.topic,
+      create_message(state.location),
       [qos: 1]
     )
 
@@ -61,7 +63,7 @@ defmodule TinCamera do
     {:noreply, state}
   end
 
-  defp create_message() do
-    "motion,room=front frame=\"" <> (Picam.next_frame |> Base.encode64()) <> "\""
+  defp create_message(location) do
+    "motion,room=#{location} frame=\"#{Picam.next_frame |> Base.encode64()}\""
   end
 end
