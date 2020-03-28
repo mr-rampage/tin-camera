@@ -29,6 +29,8 @@ defmodule TinCamera do
         handler: {Tortoise.Handler.Logger, []}
     )
 
+    Picam.set_size(1280, 0)
+
     {:ok, %{gpio: gpio, client_id: client_id, mqtt: mqtt, topic: topic, location: location}}
   end
 
