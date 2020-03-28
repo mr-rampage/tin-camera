@@ -12,12 +12,12 @@ defmodule TinCamera do
 
   @impl GenServer
   def init(config) do
+    {:ok, gpio} = @gpio.open(Keyword.get(config, :pin, "17") |> String.to_integer(), :input)
+    @gpio.set_interrupts(gpio, :both)
+
     client_id = Keyword.get(config, :mqtt_client_id, "nerves-client")
     topic = Keyword.get(config, :mqtt_topic, "cameras")
     location = Keyword.get(config, :location, "front")
-
-    {:ok, gpio} = @gpio.open(Keyword.get(config, :pin, "17") |> String.to_integer(), :input)
-    @gpio.set_interrupts(gpio, :both)
 
     {:ok, mqtt} = Tortoise.Connection.start_link(
         client_id: client_id,
